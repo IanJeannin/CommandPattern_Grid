@@ -12,9 +12,13 @@ public class GridMovement : MonoBehaviour
     [SerializeField]
     private float moveCooldown;
 
+    //Stores the tiles that have already been moved on
+    //private Vector3 [] UsedTiles;
+
     // Update is called once per frame
     void Update()
     {
+        /*
         if(Input.GetKey(KeyCode.W)&&!isMoving)
         {
             StartCoroutine(MovePlayer(Vector3.up));
@@ -30,7 +34,7 @@ public class GridMovement : MonoBehaviour
         if (Input.GetKey(KeyCode.D) && !isMoving)
         {
             StartCoroutine(MovePlayer(Vector3.right));
-        }
+        }*/
     }
 
     private IEnumerator MovePlayer(Vector3 direction)
@@ -41,5 +45,25 @@ public class GridMovement : MonoBehaviour
         transform.position = targetPos;
         yield return new WaitForSeconds(moveCooldown);
         isMoving = false;
+    }
+
+    public void MoveDown()
+    {
+        StartCoroutine(MovePlayer(Vector3.down));
+    }
+
+    public void MoveUp()
+    {
+        StartCoroutine(MovePlayer(Vector3.up));
+    }
+
+    public void MoveLeft()
+    {
+        StartCoroutine(MovePlayer(Vector3.left));
+    }
+
+    public void MoveRight()
+    {
+        StartCoroutine(MovePlayer(Vector3.right));
     }
 }
