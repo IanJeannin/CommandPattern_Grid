@@ -8,7 +8,7 @@ namespace ConsoleCommand.Commands
     {
         public MoveLeft() : base()
         {
-            this.CommandName = "Move Up";
+            this.CommandName = "Move Left";
             this.UndoCommand = new UndoMoveLeftCommand(this);
         }
 
@@ -18,7 +18,15 @@ namespace ConsoleCommand.Commands
             var target = go.GetComponent<GridMovement>();
             if (target is GridMovement)
             {
-                target.MoveLeft();
+                if (target.MoveLeft())
+                {
+                    base.Execute(go);
+                }
+                else
+                {
+                    base.Execute(go);
+                    base.UnExecute();
+                }
             }
             base.Execute(go);
         }
@@ -38,7 +46,7 @@ namespace ConsoleCommand.Commands
             var target = go.GetComponent<GridMovement>();
             if (target is GridMovement)
             {
-                target.MoveRight();
+                target.UndoMoveLeft();
             }
             base.Execute(go);
         }

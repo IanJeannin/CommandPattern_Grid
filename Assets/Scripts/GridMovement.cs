@@ -4,16 +4,18 @@ using UnityEngine;
 
 public class GridMovement : MonoBehaviour
 {
-    private bool isMoving=false;
     private Vector3 originPos;
     private Vector3 targetPos;
     [SerializeField]
     private float distance =0.1f;
     [SerializeField]
     private float moveCooldown;
+    [SerializeField]
+    private GameObject usedTileSprite;
 
     //Stores the tiles that have already been moved on
-    //private Vector3 [] UsedTiles;
+    private Stack<Vector3> UsedTiles = new Stack<Vector3>();
+    private Stack<GameObject> UsedTileSprites = new Stack<GameObject>();
 
     // Update is called once per frame
     void Update()
@@ -37,33 +39,87 @@ public class GridMovement : MonoBehaviour
         }*/
     }
 
-    private IEnumerator MovePlayer(Vector3 direction)
+    /*private IEnumerator MovePlayer(Vector3 direction)
     {
         isMoving = true;
         originPos = this.gameObject.transform.position;
         targetPos = originPos + (direction*distance);
+        if(!UsedTiles.Contains(targetPos))
+        {
+            UsedTiles.Push(targetPos);
+            transform.position = targetPos;
+            yield return new WaitForSeconds(moveCooldown);
+            isMoving = false;
+        }
+        else
+        {
+        }
+    }*/
+
+    private bool MovePlayer(Vector3 direction)
+    {
+        originPos = this.gameObject.transform.position;
+        targetPos = originPos + (direction * distance);
+        UsedTiles.Push(originPos);
+        UsedTileSprites.Push(Instantiate(usedTileSprite, originPos, Quaternion.identity));
         transform.position = targetPos;
-        yield return new WaitForSeconds(moveCooldown);
-        isMoving = false;
+        //If false, the command will be unexecuted
+        if (!UsedTiles.Contains(targetPos))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
-    public void MoveDown()
+    private void UndoMovePlayer(Vector3 direction)
     {
-        StartCoroutine(MovePlayer(Vector3.down));
+        originPos = this.gameObject.transform.position;
+        targetPos = originPos + (direction * distance);
+        transform.position = targetPos;
+        UsedTiles.Pop();
+        Destroy(UsedTileSprites.Pop());
     }
 
-    public void MoveUp()
+    public bool MoveDown()
     {
-        StartCoroutine(MovePlayer(Vector3.up));
+        return MovePlayer(Vector3.down);
     }
 
-    public void MoveLeft()
+    public bool MoveUp()
     {
-        StartCoroutine(MovePlayer(Vector3.left));
+        return MovePlayer(Vector3.up);
     }
 
-    public void MoveRight()
+    public bool MoveLeft()
     {
-        StartCoroutine(MovePlayer(Vector3.right));
+        return MovePlayer(Vector3.left);
+    }
+
+    public bool MoveRight()
+    {
+        return MovePlayer(Vector3.right);
+    }
+
+    public void UndoMoveUp()
+    {
+        UndoMovePlayer(Vector3.down);
+    }
+
+    public void UndoMoveDown()
+    {
+        UndoMovePlayer(Vector3.up);
+    }
+
+    public void UndoMoveLeft()
+    {
+        UndoMovePlayer(Vector3.right);
+    }
+
+    public void UndoMoveRight()
+    {
+        UndoMovePlayer(Vector3.left);
     }
 }

@@ -18,7 +18,15 @@ namespace ConsoleCommand.Commands
             var target = go.GetComponent<GridMovement>();
             if (target is GridMovement)
             {
-                target.MoveUp();
+                if (target.MoveUp())
+                {
+                    base.Execute(go);
+                }
+                else
+                {
+                    base.Execute(go);
+                    base.UnExecute();
+                }
             }
             base.Execute(go);
         }
@@ -38,7 +46,7 @@ namespace ConsoleCommand.Commands
             var target = go.GetComponent<GridMovement>();
             if (target is GridMovement)
             {
-                target.MoveDown();
+                target.UndoMoveUp();
             }
             base.Execute(go);
         }
